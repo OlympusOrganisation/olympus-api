@@ -8,7 +8,10 @@
     ],
 	 "rewrites": [
       {
-        "source": "/**", "function": "api_v1beta1_modules"
+        "source": "/api/**", "function": "api_v1beta1_modules"
+      },
+      {
+        "source": "/sendRequest", "function": "getIntent"
       }
     ]
   },

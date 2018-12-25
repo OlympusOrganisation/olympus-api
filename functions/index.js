@@ -2,10 +2,13 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const express = require("express");
 const bodyParser = require("body-parser");
+const server = require("./requestServer.js");
 
 admin.initializeApp(functions.config().firebase);
 const firestore = admin.firestore();
 const FieldValue = admin.firestore.FieldValue;
+
+exports.api = functions.https.onRequest(server(admin, firestore));
 
 exports.onUserCreate = functions.auth.user().onCreate((user) => {
   const email = user.email;

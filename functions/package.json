@@ -10,10 +10,17 @@
     "logs": "firebase functions:log"
   },
   "dependencies": {
+    "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.5",
     "express": "^4.16.4",
     "firebase-admin": "~6.0.0",
-    "firebase-functions": "^2.1.0"
+    "firebase-functions": "^2.1.0",
+    "fs": "0.0.1-security",
+    "simple-regexp": "^0.1.5",
+    "string-to-regexp": "^0.1.0",
+    "vm2": "^3.6.4"
   },
   "devDependencies": {
     "eslint": "^4.12.0",
