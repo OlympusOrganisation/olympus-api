@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/__/firebase/5.7.0/firebase-app.js"></script>
+    <script src="/__/firebase/5.7.0/firebase-auth.js"></script>
+    <script src="/__/firebase/5.7.0/firebase-database.js"></script>
+    <script src="/__/firebase/5.7.0/firebase-messaging.js"></script>
+    <script src="/__/firebase/5.7.0/firebase-functions.js"></script>
+    <script src="/__/firebase/init.js"></script>
+  </head>
+  <body>
+
+   <script>
+    function parse_query_string(query) {
+      var vars = query.split("&");
+      var query_string = {};
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        var key = decodeURIComponent(pair[0]);
+        var value = decodeURIComponent(pair[1]);
+        // If first entry with this name
+        if (typeof query_string[key] === "undefined") {
+          query_string[key] = decodeURIComponent(value);
+          // If second entry with this name
+        } else if (typeof query_string[key] === "string") {
+          var arr = [query_string[key], decodeURIComponent(value)];
+          query_string[key] = arr;
+          // If third or later entry with this name
+        } else {
+          query_string[key].push(decodeURIComponent(value));
+        }
+      }
+      return query_string;
+    }
+
+    var query = window.location.search.substring(1);
+    var qs = parse_query_string(query);
+     
+    if (!qs.success) {
+      window.location.href = "/login?action=oauth2" + ((qs.redirect_uri) ? "&redirect_uri="+qs.redirect_uri : "")+ ((qs.state) ? "&state="+qs.state : "") + ((qs.response_type) ? "&response_type="+qs.response_type : "");
+    } else
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user && qs.success == "true") {
+          if (qs.redirect_uri) {
+            return user.getIdToken().then((token) => {
+              window.location.href = qs.redirect_uri+"?action=oauth2" + ((qs.state) ? "&state="+qs.state : "") + ((qs.response_type) ? "&response_type="+qs.response_type : "") + "&refresh_token="+token;              
+            });
+          } else window.location.href = "/";
+        } else window.location.href = "/login?action=oauth2" + ((qs.redirect_uri) ? "&redirect_uri="+qs.redirect_uri : "")+ ((qs.state) ? "&state="+qs.state : "") + ((qs.response_type) ? "&response_type="+qs.response_type : "");
+      });
+   </script>
+  </body>
+</html>

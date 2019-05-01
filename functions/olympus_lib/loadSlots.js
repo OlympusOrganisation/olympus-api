@@ -1,11 +1,9 @@
 'use strict';
 
-const getJSON = require('./getJSON');
-const { verifyCustomSlots } = require('./verifyCustomSlots');
-const processCustomSlots = require('./processCustomSlots');
+const processCustomSlots = require('./processSlots');
 
 const loadSlots = function(db) {
-  return db.collection("customSlots").get().then(querySnapshot => {
+  return db.collection("slots").get().then(querySnapshot => {
     let slots = [];
     querySnapshot.forEach(doc => {
       slots.push(doc.data());

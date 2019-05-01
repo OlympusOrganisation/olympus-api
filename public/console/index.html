@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<link type="text/css" rel="stylesheet" href="https://static.olympusorg.com/css/main.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+		<script defer src="https://use.fontawesome.com/releases/v5.6.3/js/all.js" integrity="sha384-EIHISlAOj4zgYieurP0SdoiBYfGJKkgWedPHH4jCzpCXLmzVsw1ouK59MuUtP4a1" crossorigin="anonymous"></script>
+		<style>
+			.content {
+				width: 100%;
+				height: 100vh;
+				display: flex;
+				flex-direction: row;
+			}
+
+			.sidebar {
+				width: 350px;
+			}
+
+      @media only screen and (max-width: 1000px) {
+        .sidebar {
+          display: block;
+				  width: 350px;
+          transition: all .7s;
+          margin-right: -290px;
+          overflow: hidden;
+        }
+
+        .sidebar:hover {
+				  width: 250px;
+          margin-right: 0px;
+        }
+
+        .sidebar .logo {
+          transition: all .7s;
+        }
+
+        .sidebar .logo-container {
+          width: 60px !important;
+        }
+
+        .sidebar .minimize {
+          display: flex !important;
+        }
+
+        .sidebar .category .sub-link {
+          display: none !important;
+        }
+      }
+
+      @media only screen and (max-width: 800px) {
+        .sidebar {
+          position: absolute;
+				  width: 60px;
+          height: 100vh;
+          transition: all .7s;
+          margin-right: 0px;
+          z-index: 4;
+          background-color: white;
+        }
+
+        .body {
+          margin-left: 60px;
+        }
+
+        .sidebar:hover {
+				  width: 100vw;
+        }
+        
+        .sidebar .logo-container {
+          width: 60px !important;
+          transition: all .7s;
+        }
+
+        .sidebar:hover .logo-container {
+          width: 100% !important;
+        }
+
+        .sidebar:not(:hover) .category span {
+          display: none;
+        }
+
+        .sidebar .minimize {
+          display: flex !important;
+        }
+
+        .sidebar .category .sub-link {
+          display: none !important;
+        }
+      }
+
+			.sidebar .logo-container {
+        display: flex;
+        padding: 10px;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+			}
+
+      .sidebar .logo {
+				min-width: 40px;
+        min-height: 40px;
+				font-size: 23px;
+				color: #363840;
+        background-image:url('https://static.olympusorg.com/img/logo_Dark.png');
+        background-size: contain;
+        border-radius: 5px;
+        background-repeat: no-repeat;
+        background-position: center;
+			}
+
+      .sidebar .logo img {
+        display: block;
+				width: 100px;
+        height: 100px;
+        object-fit: cover;
+			}
+
+			.sidebar .category {
+				display: flex;
+				font-size: 16px;
+				color: #363840;
+				padding: 20px;
+				border-left: 2px white solid;
+				border-right: 2px white solid;
+				cursor: pointer;
+				flex-direction: column;
+			}
+
+      .sidebar .minimize {
+        position: absolute;
+        bottom: 0px;
+				font-size: 16px;
+				color: #9FA2B3 !important;
+				padding: 22px;
+				cursor: pointer;
+        display: none;
+			}
+
+			.sidebar .category .cat-row {
+				display: flex;
+				justify-content: space-between;
+				flex-direction: row;
+				align-items: center;
+				width: 100%;
+			}
+
+			.sidebar .category span {
+				font-weight: 500;
+			}
+
+			.sidebar .category.active>span, .sidebar .category.active i, .sidebar .category.active svg {
+				color: #3751FF !important;
+			}
+
+			.sidebar .category svg, .sidebar .category i {
+				display: inline-block;
+				margin-right: 23px;
+				width: 17px;
+				height: 17px;
+				color: #9FA2B3;
+			}
+
+			.sidebar .category.active {
+				color: #3751FF !important;
+				border-left: 2px #3751FF solid;
+				cursor: default !important;
+			}
+
+			.body {
+				flex: 1;
+				background-color: #F7F8FC;
+			}
+
+			.progress {
+				width: 6px;
+				height: 6px;
+				border-radius: 3px;
+				margin: 4px 8px;
+				margin-top: 15px;
+			}
+
+			.progress.active {
+				width: 30px;
+				background-color: #3751FF;
+			}
+
+			.progress-container {
+				margin-left: -7px;
+				justify-content: start !important;
+			}
+
+			.sidebar .category .sub-link {
+				display: flex;
+				font-size: 16px;
+				color: #363840 !important;
+				padding: 20px 44px;
+				padding-bottom: 0px;
+				cursor: pointer;
+				flex-direction: column;
+			}
+
+      .sidebar .category .sub-link.active span {
+				color: #3751FF !important;
+			}
+
+			.tag {
+				display: flex;
+				width: 45px;
+				height: 25px;
+				border-radius: 12.5px;
+				background-color: #F0F1F7;
+				justify-content: center;
+				align-items: center;
+				color: #9FA2B3 !important;
+			}
+
+			.sidebar .category .sub-link span {
+				color: #363840 !important;
+			}
+
+			.top-panel {
+				height: 120px;
+				padding: 0px 60px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				color: #9FA2B3;
+				width: 100%;
+			}
+
+			.bottom-panel {
+				height: 120px;
+				padding: 0px 60px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				color: #9FA2B3;
+				width: 100%;
+			}
+
+			.btn {
+				border: 1px solid #E5E7EF;
+				background-color: white;
+				padding: 17px 35px;
+        min-width: 200px;
+			}
+
+      .key {
+				border: 2px solid #E5E7EF;
+				background-color: white;
+				padding: 0px 10px;
+        border-radius: 3px;
+        height: 35px;
+        min-width: 35px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        color: #9FA2B4;
+        font-size: 13px;
+        margin: 0px 10px;
+			}
+
+			.body {
+				display: flex;
+				flex-direction: column;
+			}
+
+      .body .content {
+        display: flex;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .body .content .page {
+        transition: all .7s;
+        position: absolute;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      .body .content .page:nth-child(1) {
+        left: 0%;
+        transition: all .7s;
+      }
+
+      .body .content .page:nth-child(2) {
+        left: 100%;
+        transition: all .7s;
+      }
+
+      .body .content .page:nth-child(3) {
+        left: 200%;
+        transition: all .7s;
+      }
+
+      .body .content[page="2"] .page:nth-child(1) {
+        left: -100%;
+        transition: all .7s;
+      }
+
+      .body .content[page="2"] .page:nth-child(2) {
+        left: 0%;
+        transition: all .7s;
+      }
+
+      .body .content[page="2"] .page:nth-child(3) {
+        left: 100%;
+        transition: all .7s;
+      }
+
+      .body .content[page="3"] .page:nth-child(1) {
+        left: -200%;
+        transition: all .7s;
+      }
+
+      .body .content[page="3"] .page:nth-child(2) {
+        left: -100%;
+        transition: all .7s;
+      }
+
+      .body .content[page="3"] .page:nth-child(3) {
+        left: 0%;
+        transition: all .7s;
+      }
+
+      .stage-label {
+        font-size: 10px;
+        color: #9FA2B4;
+      }
+
+      .title {
+        font-size: 30px;
+        font-weight: bold;
+      }
+
+      .label {
+        color: #363840;
+      }
+
+      input {
+        background-color: transparent;
+        border-width: 0px;
+        border-bottom: 2px #9FA2B4 solid;
+        height: 35px;
+      }
+
+      input::placeholder {
+        color: #9FA2B4;
+        font-size: 20px;
+      }
+      input:focus ~ .floating-label, input:not(:focus):valid ~ .floating-label {
+        top: -10px;
+        bottom: 10px;
+        font-size: 11px;
+        opacity: 1;
+      }
+
+      .inputText {
+        font-size: 20px;
+        width: 300px;
+        height: 35px;
+        color: #252733;
+        font-weight: bold;
+        outline: none;
+      }
+
+      .floating-label {
+        position: absolute;
+        pointer-events: none;
+        top: 5px;
+        transition: 0.2s ease all;
+        color: #9FA2B4;
+      }
+
+      .btn.disabled {
+        background-color: #DDDEE8;
+        color: white;
+      }
+
+      .btn.small {
+				padding: 12px 20px;
+        min-width: 100px;
+      }
+
+      .btn.active {
+        background-color: #3751FF;
+      }
+		</style>
+	</head>
+	<body>
+		<div class="content">
+			<div class="sidebar">
+					<div class="logo-container">
+              <div class="logo"></div>
+					</div>
+					<div class="category">
+						<div class="cat-row">
+							<div style="display: flex; flex-direction: row">
+								<i class="fas fa-comments"></i>
+								<span>General</span>
+							</div>
+						</div>
+					</div>
+					<div class="category active">
+						<div class="cat-row">
+							<div style="display: flex; flex-direction: row">
+								<i class="fas fa-shapes"></i>
+								<span>Modules</span>
+							</div>
+							<span class="tag">56</span>
+						</div>
+						<div class="sub-link active">
+							<span>Create Module</span>
+							<div class="cat-row progress-container">
+								<div class="progress active"></div>
+								<div class="progress"></div>
+								<div class="progress"></div>
+							</div>
+						</div>
+						<div class="sub-link">
+							<span>View Own</span>
+						</div>
+						<div class="sub-link">
+							<span>Discover</span>
+						</div>
+					</div>
+					<div class="category">
+						<div class="cat-row">
+							<div style="display: flex; flex-direction: row">
+								<i class="fas fa-list"></i>
+								<span>Slots</span>
+							</div>
+							<span class="tag">56</span>
+						</div>
+          </div>
+          <div class="minimize">
+            <i class="fas fa-list"></i>
+          </div>
+			</div>
+			<div class="body">
+				<div class="top-panel">
+					<span>You are creating a module</span>
+					<div class="btn small">Sign Up</div>
+        </div>
+        <div class="content" page="1">
+          <div class="page">
+            <span class="stage-label"></span>
+            <span class="title">Name your new module</span>
+            <div style="margin-top: 30px; margin-bottom: 70px;">
+              <div style="display: block; position: relative;">
+                <input type="text" class="inputText" required/>
+                <span class="floating-label">Name</span>
+              </div>
+            </div>
+            <div class="btn disabled" id="next">
+              Next
+            </div>
+          </div>
+          <div class="page">
+              <span class="stage-label"></span>
+              <span class="title">Who is this module is for?</span>
+              <div style="margin-top: 30px; margin-bottom: 70px;">
+                <div style="display: block; position: relative;">
+                  <input type="text" class="inputText" required/>
+                  <span class="floating-label">Organisation</span>
+                </div>
+              </div>
+              <div class="btn disabled" id="next">
+                Next
+              </div>
+            </div>
+            <div class="page">
+                <span class="stage-label"></span>
+                <span class="title">What type is it?</span>
+                <div style="margin-top: 30px; margin-bottom: 70px;">
+                  <div style="display: block; position: relative;">
+                    <input type="text" class="inputText" required/>
+                    <span class="floating-label">Name</span>
+                  </div>
+                </div>
+                <div class="btn disabled" id="next">
+                  Next
+                </div>
+              </div>
+        </div>
+				<div class="bottom-panel">
+					<div style="display: flex; justify-content: center; align-items:center; margin-left: -10px">
+              <div class="key"><i class="fas fa-caret-left"></i></div>
+              <span class="label">Previous</span>
+              <div class="key">ENTER</i></div>
+							<span class="label">Confirm</span>
+					</div>
+				</div>
+			</div>
+    </div>
+    
+    <script>
+      $(() => {
+        const pages = [];
+        $(".page").each(function() {
+          pages.push({
+            step: $(this).find(".stage-label"),
+            title: $(this).find(".title"),
+            nextButton: $(this).find(".btn#next"),
+            inputs: $(this).find("input")
+          })
+        })
+        for (const page of pages) {
+          page.step.html(`Step ${pages.indexOf(page) + 1}/${pages.length}`)
+          page.inputs.on('input', function() {
+            if ($(this).val().length >= 3)
+              page.nextButton.addClass("active");
+            else 
+              page.nextButton.removeClass("active");
+          })
+        }
+      });
+    </script>
+
+		<script src="/__/firebase/5.7.0/firebase-app.js"></script>
+		<script src="/__/firebase/5.7.0/firebase-auth.js"></script>
+		<script src="/__/firebase/5.7.0/firebase-firestore.js"></script>
+		<script src="/__/firebase/init.js"></script>
+	</body>
+</html>

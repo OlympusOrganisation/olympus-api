@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link type="text/css" rel="stylesheet" href="https://static.olympusorg.com/css/main.css">
+    <link type="text/css" rel="stylesheet" href="https://static.olympusorg.com/css/TopBar.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <style>
+      .content {
+        padding: 10px;
+      }
+      
+      label {
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="TopBar"></div>
+    <div class="content">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <h2>Create Slot for Intents</h2>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-8">
+            <form action="javascript:createSlot();">
+              <div class="mb-2">
+                 <span class="lead">Create an Slot</span>
+              </div>
+              <div class="form-group">
+                <label for="slotName">Slot name</label>
+                <input type="text" class="form-control" id="slotName" aria-describedby="slotNameHelp" required>
+                <div class="invalid-feedback">
+                  Slot name is not available or must be at least 4 characters long.
+                </div>
+              </div>
+              <div class="form-group mb-4">
+                <label for="slotDescription">Slot description</label>
+                <input type="text" class="form-control" id="slotDescription" describedby="slotDescriptionHelp" required>
+                <small id="slotDescriptionHelp" class="form-text text-muted">Help others identify what this slot represents.</small>
+              </div>              
+              <small class="form-text text-muted mb-3">By clicking on "Create slot" below, you are agreeing to the Terms of Service and the Privacy Policy.</small>
+              <button type="submit" class="btn btn-secondary">Create Slot</button>
+            </form>
+          </div>
+          <div class="col-md-4">
+            <small class="form-text text-muted">Slots are used for getting data in intents.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      $(() => {
+        $("#TopBar").load("https://static.olympusorg.com/TopBar.htm");     
+      })
+    </script>
+    
+    <script src="/__/firebase/5.7.0/firebase-app.js"></script>
+
+    <!-- Add additional services that you want to use -->
+    <script src="/__/firebase/5.7.0/firebase-auth.js"></script>
+    <script src="/__/firebase/5.7.0/firebase-database.js"></script>
+    <script src="/__/firebase/5.7.0/firebase-firestore.js"></script>
+    <script src="/__/firebase/5.7.0/firebase-messaging.js"></script>
+    <script src="/__/firebase/5.7.0/firebase-functions.js"></script>
+
+    <script src="/__/firebase/init.js"></script>
+     <script>
+      const db = firebase.firestore();
+      db.settings({
+        timestampsInSnapshots: true
+      });
+       
+      $(() => {
+        $("#slotName").on('input', function () {
+          const name = $(this).val();
+          $(".insertSlotName").html(name);
+          if (name.length >= 4) {
+            var docRef = db.collection("slots").doc("CS50." + name);
+            docRef.get().then((doc) => {
+              if (!doc.exists) {
+                $("#slotName").removeClass("is-invalid");
+                $("#slotName").addClass("is-valid");
+              } else {
+                $("#slotName").removeClass("is-valid");
+                $("#slotName").addClass("is-invalid");
+              }
+            });
+          } else {
+            $("#slotName").removeClass("is-valid");
+            $("#slotName").addClass("is-invalid");
+          }
+        });     
+      });
+      
+      const createSlot = () => {
+        const name = $('#slotName').val();
+        const description = $('#slotDescription').val();
+        const id = "CS50." + name;
+        
+        var slotRef = db.collection("slots").doc(id);
+        slotRef.set({
+          id: id,
+          organisationID: "CS50",
+          name: name,
+          description: description,
+          values: []
+        }).then(() => {
+          window.location.replace("/o/slots/#" + name);
+        });
+      }
+    </script>
+  </body>
+</html>

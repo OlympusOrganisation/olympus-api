@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link type="text/css" rel="stylesheet" href="https://static.olympusorg.com/css/main.css">
+    <link type="text/css" rel="stylesheet" href="https://static.olympusorg.com/css/TopBar.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <style>
+      .content {
+        padding: 10px;
+      }
+      
+      label {
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="TopBar"></div>
+    <div class="content">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <h2>Sign up your team</h2>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-8">
+            <form action="javascript:createOrganisation();">
+              <div class="mb-2">
+                 <span class="lead">Create an Organisation</span>
+              </div>
+              <div class="form-group">
+                <label for="organisationName">Organisation name</label>
+                <input type="text" class="form-control" id="organisationName" aria-describedby="organisationNameHelp" required>
+                <div class="valid-feedback">
+                  This will be your organization name on https://olympusorg.com/o/<span class="insertOrganisationName"></span>.
+                </div>
+                <div class="invalid-feedback">
+                  Organisation name is not available and must be at least 3 characters long.
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="organisaionBillingEmail">Billing email</label>
+                <input type="email" class="form-control" id="organisaionBillingEmail" describedby="organisaionBillingEmailHelp" required>
+                <div class="valid-feedback">
+                  This will be your organization name on https://olympusorg.com/o/<span class="insertOrganisationName"></span>.
+                </div>
+                <div class="invalid-feedback">
+                  Organisation name is not available and must be at least 3 characters long.
+                </div>
+                <small id="organisaionBillingEmailHelp" class="form-text text-muted">We’ll send receipts to this inbox.</small>
+              </div>
+              <div class="mb-2">
+                 <span class="lead">Choose your plan</span>
+              </div>
+              <ul class="list-group mb-4">
+                <li class="list-group-item d-flex justify-content-between">
+                  <div class="p-1 d-flex justify-content-center">
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" id="planFree" style="margin-right: 10px;" checked required>
+                      <label class="custom-control-label" for="planFree">      
+                        <div class="h6">Free</div>
+                      </label>
+                      <div class="text-align-left">Unlimited users and public projects</div>
+                    </div>
+                  </div>
+                  <div class="p-1 d-flex justify-content-center">
+                    <span>£0</span>
+                  </div>
+                </li>
+              </ul>
+              
+              <small class="form-text text-muted mb-3">By clicking on "Create organization" below, you are agreeing to the Terms of Service and the Privacy Policy.</small>
+              <button type="submit" class="btn btn-secondary">Create organisation</button>
+            </form>
+          </div>
+          <div class="col-md-4">
+            <small class="form-text text-muted">Organization accounts allow your team to plan, build, review, and ship to the Olympus Platform.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      $(() => {
+        $("#TopBar").load("https://static.olympusorg.com/TopBar.htm");     
+      })
+    </script>
+    
+    <script src="/__/firebase/5.7.0/firebase-app.js"></script>
+
+    <!-- Add additional services that you want to use -->
+    <script src="/__/firebase/5.7.0/firebase-auth.js"></script>
+    <script src="/__/firebase/5.7.0/firebase-database.js"></script>
+    <script src="/__/firebase/5.7.0/firebase-firestore.js"></script>
+    <script src="/__/firebase/5.7.0/firebase-messaging.js"></script>
+    <script src="/__/firebase/5.7.0/firebase-functions.js"></script>
+
+    <script src="/__/firebase/init.js"></script>
+     <script>
+      const db = firebase.firestore();
+      db.settings({
+        timestampsInSnapshots: true
+      });
+       
+      $(() => {
+        $("#organisationName").on('input', function () {
+          const name = $(this).val();
+          $(".insertOrganisationName").html(name.toLowerCase());
+          if (name.length >= 3) {
+            var docRef = db.collection("organisations").doc(name.toLowerCase());
+            docRef.get().then((doc) => {
+              if (!doc.exists) {
+                $("#organisationName").removeClass("is-invalid");
+                $("#organisationName").addClass("is-valid");
+              } else {
+                $("#organisationName").removeClass("is-valid");
+                $("#organisationName").addClass("is-invalid");
+              }
+            });
+          } else {
+            $("#organisationName").removeClass("is-valid");
+            $("#organisationName").addClass("is-invalid");
+          }
+        });     
+      });
+      
+      const createOrganisation = () => {
+        const name = $('#organisationName').val();
+        const billingEmail = $('#organisaionBillingEmail').val();
+        const planFree = $('#planFree').val() == "on";
+        const id = name.toLowerCase();
+        
+        var organisationRef = db.collection("organisations").doc(id);
+        organisationRef.set({
+          id: id,
+          name: name,
+          billingEmail: billingEmail,
+          planFree: planFree
+        }).then(() => {
+          window.location.replace(`/o/${name}`);
+        });
+      }
+    </script>
+  </body>
+</html>

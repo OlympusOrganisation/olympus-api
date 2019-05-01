@@ -7,6 +7,21 @@ class ModuleBuilder {
     this.stores = [];
     this.loaded = false;
   }
+
+  getIntentList() {
+    const intentList = this.handlers.map(h => h.intentName);
+    return intentList.filter((item, pos) => {
+      return intentList.indexOf(item) === pos;
+    });
+  }
+
+  getPhrasesForIntent(intentName) {
+    for (var handler of this.handlers) {
+      if (handler.intentName === intentName)
+        return handler.phrases;
+    }
+    return [];
+  }
   
   process(moduleHandler) {
     moduleHandler.responseBuilder = responseBuilder;

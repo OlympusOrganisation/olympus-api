@@ -1,0 +1,146 @@
+<html>
+  <head>
+    <title>Sign in - Olympus</title>
+    <link href="https://static.olympusorg.com/css/Login.css" rel="stylesheet">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js" integrity="sha384-kW+oWsYx3YpxvjtZjFXqazFpA7UP/MbiY4jvs+RWZo2+N94PFZ36T6TFkc9O3qoB" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="./Auth.js"></script>
+  </head>
+  
+  <style>
+    .wrapper .form-wrapper {
+      max-width: none;
+    }
+    .providers {
+      display: flex;
+    }
+    
+    .providerLink {
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      align-items: center;
+      font-size: 60px;
+      background-color: blue;
+      width: 100px;
+      height: 100px;
+      color: white;
+      border-radius: 100%;
+      margin: 0px 7.5px;
+      cursor: pointer;
+    }
+    
+    .providerLink.disabled {
+      opacity: 0.25;
+      cursor: not-allowed;
+    }
+    
+    .providerLink:hover:not(.disabled) {
+      opacity: 0.5;
+    }
+    .providerLink.fb {
+      background-color: #3b5998;
+      color: white;
+    }
+    .providerLink.google {
+      background-color: #DB4437;
+      color: white;
+    }
+    .providerLink.microsoft {
+      background-color: #737373;
+      color: white;
+    }
+    .providerLink.github {
+      background-color: #24292e;
+      color: white;
+    }
+  </style>
+   <body>
+      <div class="page-wrapper">
+         <div class="wrapper">
+            <div class="form-wrapper">
+               <div class="title">Olympus
+                  <span>Sign in with a provider</span>
+                    <div class="error"></div>
+               </div>
+               <div class="sign-in">
+                 <div class="providers">
+                   <div class="providerLink google" id="signInWithGoogle">
+                    <i class="fab fa-google"></i>
+                   </div>
+                   <div class="providerLink microsoft disabled" id="signInWithMicrosoft">
+                   <i class="fab fa-microsoft"></i>
+                   </div>
+                   <div class="providerLink fb disabled" id="signInWithFacebook">
+                    <i class="fab fa-facebook-f"></i>
+                   </div>
+                   <div class="providerLink github disabled" id="signInWithGitHub">
+                    <i class="fab fa-github"></i>
+                   </div>
+                 </div>
+               </div>
+            </div>
+         </div>
+      </div>
+     
+      <script src="/__/firebase/5.7.0/firebase-app.js"></script>
+      <script src="/__/firebase/5.7.0/firebase-auth.js"></script>
+      <script src="/__/firebase/init.js"></script>
+     
+     <script>
+      $(function() {
+        const signInWithGoogle = $("#signInWithGoogle");
+        const signInWithMicrosoft = $("#signInWithMicrosoft");
+        const signInWithFacebook = $("#signInWithFacebook");
+        const signInWithGitHub = $("#signInWithGitHub");
+        var GoogleProvider = new firebase.auth.GoogleAuthProvider();
+        
+        function parse_query_string(query) {
+          var vars = query.split("&");
+          var query_string = {};
+          for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            var key = decodeURIComponent(pair[0]);
+            var value = decodeURIComponent(pair[1]);
+            // If first entry with this name
+            if (typeof query_string[key] === "undefined") {
+              query_string[key] = decodeURIComponent(value);
+              // If second entry with this name
+            } else if (typeof query_string[key] === "string") {
+              var arr = [query_string[key], decodeURIComponent(value)];
+              query_string[key] = arr;
+              // If third or later entry with this name
+            } else {
+              query_string[key].push(decodeURIComponent(value));
+            }
+          }
+          return query_string;
+        }
+
+        const query = window.location.search.substring(1);
+        const qs = parse_query_string(query);
+        
+        signInWithGoogle.click(() => {
+          firebase.auth().signInWithPopup(GoogleProvider).then((result) => {
+          console.log(result);
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            const token = result.credential.accessToken;
+            // The signed-in user info.
+            const user = result.user;
+            user.getIdToken().then(token => {
+              Auth.createSession(token).then(result => {
+                if (qs.action == "oauth2") {
+                  window.location.href = "/oauth2/auth?success=true" + ((qs.redirect_uri) ? "&redirect_uri="+qs.redirect_uri : "") + ((qs.state) ? "&state="+qs.state : "") + ((qs.response_type) ? "&response_type="+qs.response_type : "");
+                } else window.location.href = "/";
+                console.log(result);
+              })
+            });
+          }).catch(function(error) {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+          });
+        });
+      });
+     </script>
+   </body>
+</html>

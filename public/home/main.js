@@ -66,7 +66,7 @@ Demo.prototype.getRequest = function(str) {
     req.onerror = function(err) {
       console.log(err);
     }.bind(this);
-    req.open('GET', "https://us-central1-olympus-organisation-api.cloudfunctions.net/api/fetchIntent?q="+str, true);
+    req.open('GET', "https://api.olympusorg.com/v1/fetchIntent?q="+str, true);
     req.setRequestHeader('Authorization', 'Bearer ' + token);
     req.send();
   }.bind(this));
@@ -109,6 +109,9 @@ Demo.prototype.onAuthStateChanged = function(user) {
     document.getElementById("displayUserName").textContent = ", " + user.displayName;
     this.signedOutCard.style.display = 'none';
     this.signedInCard.style.display = 'flex';
+    let a = user.getIdToken().then((a) => {
+      document.getElementById(`authQR`).src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${a}`;
+    });
     this.captionsContainer.style.display = 'none';
     this.startFunctionsRequest();
     this.startFunctionsCookieRequest();

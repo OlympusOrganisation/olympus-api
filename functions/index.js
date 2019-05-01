@@ -1,14 +1,96 @@
 const functions = require('firebase-functions');
-const admin = require('firebase-admin');
 const express = require("express");
-const bodyParser = require("body-parser");
 const server = require("./requestServer.js");
+const engines = require("consolidate");
+const admin = require("./lib/admin");
 
-admin.initializeApp(functions.config().firebase);
 const firestore = admin.firestore();
+const settings = {
+  timestampsInSnapshots: true
+};
+firestore.settings(settings);
 const FieldValue = admin.firestore.FieldValue;
 
 exports.api = functions.https.onRequest(server(admin, firestore));
+
+const app = express();
+app.engine('hbs', engines.handlebars);
+app.set('views', './views');
+app.set('view engine', 'hbs');
+
+function getOrganisation(orgID) {
+    const orgRef = firestore.collection("organisations").doc(orgID);
+    return orgRef.get().then(snap => {
+      return snap.data();
+    })
+}
+
+app.get('/organisations/new', (req, res) => {
+  return res.render('createOrganisation', {});
+});
+
+app.get('/o/', (req, res) => {
+  return res.render('listOrganisations', {});
+});
+
+app.get('/o/:orgID', (req, res) => {
+  const orgID = req.params.orgID.toLowerCase();
+  return getOrganisation(orgID).then(organisation => {
+    return res.render('viewOrganisation', {
+      title: organisation.name,
+      description: `${organisation.caption} ${organisation.name} has XX modules available. Use their modules on Olympus.`,
+      organisation: organisation
+    });
+  }).catch(() => {
+    return res.render('index', {});
+  });
+});
+
+app.get('/o/:orgID/slots/create', (req, res) => {
+  const orgID = req.params.orgID.toLowerCase();
+  return getOrganisation(orgID).then(organisation => {
+    return res.render('createSlot', organisation);
+  }).catch(() => {
+    return res.render('index', {});
+  });
+});
+
+app.get('/o/:orgID/slots/:slotID', (req, res) => {
+  const orgID = req.params.orgID.toLowerCase();
+  return getOrganisation(orgID).then(organisation => {
+    return res.render('viewSlot', {
+      selectedOrganisation: organisation,
+      slotID: req.params.slotID
+    });
+  }).catch(() => {
+    return res.render('index', {});
+  });
+});
+
+app.get('/o/:orgID/modules/create', (req, res) => {
+  const orgID = req.params.orgID.toLowerCase();
+  return getOrganisation(orgID).then(organisation => {
+    console.log(organisation);
+    return res.render('createModule', organisation);
+  }).catch(() => {
+    return res.render('index', {});
+  });
+});
+
+app.get('/o/:orgID/modules/:moduleID', (req, res) => {
+  const orgID = req.params.orgID.toLowerCase();
+  return getOrganisation(orgID).then(organisation => {
+    console.log(organisation);
+    return res.render('viewModule', {
+      selectedOrganisation: organisation,
+      moduleID: req.params.moduleID
+    });
+  }).catch(() => {
+    return res.render('index', {});
+  });
+});
+
+exports.console = functions.https.onRequest(app);
 
 exports.onUserCreate = functions.auth.user().onCreate((user) => {
   const email = user.email;
@@ -16,16 +98,75 @@ exports.onUserCreate = functions.auth.user().onCreate((user) => {
   const userID = user.uid; // The email of the user.
   if (displayName === null)
     displayName = email.substr(0,email.indexOf("@"));
-  
+
   const userRef = firestore.doc(`users/${userID}`);
   
   return userRef.set({
-    email: email,
     displayName: displayName,
     organisations: {},
     teams: {},
     account: "basic",
   });
+});
+
+exports.revokeOauth2 = functions.https.onRequest((req, res) => {
+  const code = req.body.sessionID;
+  
+  admin.auth().verifySessionCookie(sessionCookie).then((decodedClaims) => {
+    return admin.auth().revokeRefreshTokens(decodedClaims.sub);
+  }).then(() => {
+    return res.status(200).send();
+  }).catch((error) => {
+    return res.status(404).send();
+  });
+});
+
+exports.getAccessToken = functions.https.onRequest((req, res) => {
+  const refresh_token = req.body.refresh_token;
+  console.log(refresh_token);
+  return admin.auth().verifyIdToken(refresh_token)
+    .then((decodedToken) => {
+      const expiresIn = 60 * 60 * 24 * 14 * 1000; // 14 days
+      return admin.auth().createSessionCookie(refresh_token, {expiresIn}).then((access_token) => {
+        const response = {
+          expires_at: new Date(new Date().getTime() + expiresIn), 
+          access_token: access_token,
+          user: {
+            name: decodedToken.name,
+            email: decodedToken.email
+          }
+        };
+        return res.status(200).send(JSON.stringify(response));
+      }).catch((error) => {
+        console.log(error);
+        return res.status(404).send(error);
+      });
+    }).catch((error) => {
+      return res.status(402).send(error);
+    });
+});
+
+exports.getSession = functions.https.onRequest((req, res) => {
+  const code = req.body.refresh_token;
+  console.log(code);
+  return admin.auth().verifyIdToken(code)
+    .then((decodedToken) => {
+      //const userData = userRecord.toJSON();
+      const expiresIn = 60 * 60 * 24 * 14 * 1000; // 14 days
+      return admin.auth().createSessionCookie(code, {expiresIn}).then((sessionCookie) => {
+        // Set cookie policy for session cookie.
+        const response = {
+          expires_at: new Date(new Date().getTime() + expiresIn), 
+          session_token: sessionCookie,
+        };
+        return res.end(JSON.stringify(response));
+      }).catch((error) => {
+        console.log(error);
+        return res.status(404).send(error);
+      });
+    }).catch((error) => {
+      return res.status(402).send(error);
+    });
 });
 
 exports.onUserDelete = functions.auth.user().onDelete((user) => {
@@ -73,7 +214,7 @@ exports.onOrganisationCreated = functions.firestore.document('organisations/{org
       const userRef = firestore.doc(`users/${userID}`);
       let userDoc = {
         ["organisations."+organisationID]: {
-          role: "owner",
+          role: "owner"
         }
       };
       batch.update(userRef, userDoc);
@@ -340,29 +481,52 @@ batch.update(organisationRef, {
   });
 });
 
+const GetIntents = require('./olympus_lib/GetIntents');
+
 exports.onModuleCreation = functions.firestore.document('modules/{moduleID}').onCreate((snap, context) => {
   const moduleID = context.params.moduleID;
   const moduleData = snap.data();
-  const moduleConfigRef = firestore.doc(`modulesConfig/${moduleID}`);
-  return moduleConfigRef.set({
+  //code moduleData.code
+  const intents = GetIntents(moduleData.code);
+
+  return snap.ref.set({
     moduleID: moduleID,
-    lifecycleState: moduleData.lifecycleState,
     name: moduleData.name,
-    createTime: new Date(),
+    intents: intents,
+    createTime: new Date()
   });
 });
 
+const GetPhrasesForIntent = require('./olympus_lib/GetPhrasesForIntent');
+
 exports.onModuleUpdation = functions.firestore.document('modules/{moduleID}').onUpdate((change, context) => {
-  const moduleID = context.params.moduleID;
   const newData = change.after.data();
-  const prevData = change.before.data();
-  if (newData.name !== prevData.name || newData.lifecycleState !== prevData.lifecycleState) { 
-    const moduleConfigRef = firestore.doc(`modulesConfig/${moduleID}`);
-    return moduleConfigRef.update({
-      lifecycleState: newData.lifecycleState,
-      name: newData.name,
-    });
-  } else return null;
+  const oldData = change.before.data();
+
+  let map = {};
+  if (newData.code !== oldData.code) {
+    let intents = GetIntents(newData.code);
+    if (oldData.intents !== intents)
+      map.intents = intents;
+    if (newData.intents !== oldData.intents)
+      for (var intent of intents)
+        if (oldData.intents.indexOf(intent) !== -1) {
+          const phrases = GetPhrasesForIntent(newData.code, intent);
+          if (oldData.phrases !== phrases) {
+            let map = {};
+            for (var phrase of phrases)
+              if (!oldData.phrases || !oldData.phrases[phrase])
+                map["phrases."+phrase] = {
+                  public: true,
+                  intentName: intent
+                };
+          }
+        }
+  }
+  if (map !== {}) {
+    return change.after.ref.update(map);
+  } else
+    return null;
 });
 
 exports.onModuleDeletion = functions.firestore.document('modules/{moduleID}').onDelete((snap, context) => {
@@ -371,6 +535,20 @@ exports.onModuleDeletion = functions.firestore.document('modules/{moduleID}').on
   return moduleConfigRef.delete();
 });
 
+exports.onSlotUpdation = functions.firestore.document('slots/{slotID}').onUpdate((change, context) => {
+  const newData = change.after.data();
+  const oldData = change.before.data();
+
+  if (newData.values !== oldData.values) {
+    let list = [];
+    for (var value in newData.values)
+      list = list.concat(newData.values[value]);
+    return change.after.ref.update({
+      regex: "/(" + list.join("|") + ")/g"
+    });
+  }
+  return null;
+});
 
 /// API ///
 exports.api_v1beta1_modules = functions.https.onRequest((req, res) => {

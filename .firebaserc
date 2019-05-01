@@ -1,5 +1,42 @@
 {
   "projects": {
     "default": "olympus-organisation-api"
+  },
+  "targets": {
+    "olympus-organisation-api": {
+      "hosting": {
+        "accounts": [
+          "olympus-accounts"
+        ],
+        "api": [
+          "olympus-api"
+        ],
+        "main": [
+          "olympus-main"
+        ]
+      }
+    },
+    "olympus-organisation": {
+      "hosting": {
+        "main": [
+          "olympus-main"
+        ],
+        "accounts": [
+          "accounts-olympus"
+        ],
+        "home": [
+          "olympus-organisation"
+        ],
+        "api": [
+          "api-olympus"
+        ],
+        "console": [
+          "console-olympus"
+        ],
+        "static": [
+          "static-olympus"
+        ]
+      }
+    }
   }
 }

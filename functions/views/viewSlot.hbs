@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link type="text/css" rel="stylesheet" href="https://static.olympusorg.com/css/main.css">
+    <link type="text/css" rel="stylesheet" href="https://static.olympusorg.com/css/TopBar.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.6.3/js/all.js" integrity="sha384-EIHISlAOj4zgYieurP0SdoiBYfGJKkgWedPHH4jCzpCXLmzVsw1ouK59MuUtP4a1" crossorigin="anonymous"></script>
+    <style>
+      .content {
+        padding: 10px;
+      }
+      .notify-badge{
+          position: absolute;
+          right:0px;
+          bottom:0px;
+      }
+      
+      .sidePanel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 75px;
+        height: 100vh;
+        background-color: #171717;
+      }
+      
+      .sidePanel .title {
+        position: relative;
+        display: flex;
+        color: #9d9d9d;
+        font-size: 12px;
+        height: 40px;
+        margin-top: 20px;
+        width: 100%;
+        text-transform: uppercase;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+      }
+      
+      .sidePanel .link {
+        position: relative;
+        display: flex;
+        color: #FFFFFF;
+        font-size: 14px;
+        height: 40px;
+        width: 100%;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+      }
+      
+      .sidePanel .link.active {
+        background-color: #212121;
+      }
+      
+      .just-padding {
+    padding: 15px;
+}
+
+.list-group.list-group-root {
+    padding: 0;
+    overflow: hidden;
+}
+
+.list-group.list-group-root .list-group {
+    margin-bottom: 0;
+}
+
+.list-group.list-group-root .list-group-item {
+    border-radius: 0;
+    border-width: 1px 0 0 0;
+}
+
+.list-group.list-group-root > .list-group-item:first-child {
+    border-top-width: 0;
+}
+
+.list-group.list-group-root > .list-group > .list-group-item {
+    padding-left: 30px;
+}
+
+.list-group.list-group-root > .list-group > .list-group > .list-group-item {
+    padding-left: 45px;
+}
+
+.list-group-item svg {
+    margin-right: 5px;
+}
+      
+      
+      
+.table {
+  display: flex;
+  flex-direction: row;
+  width: calc(100% + 1px);
+  margin-bottom: -1px;
+}
+     
+.table . {
+  display: flex;
+  flex-direction: row;
+  width: calc(100% + 1px);
+  margin-bottom: -1px;
+}
+     
+      .table .subtable {
+        width: 100%;
+      }
+
+      .table .subtable:not(:last-child) {
+    border-right: 1px solid rgba(0,0,0,0.12);
+      }
+
+.tableRow .tableCol:first-child {
+    border-top-left-radius: 8px;
+}
+
+.tableRow .tableCol:last-child {
+    border-top-right-radius: 8px;
+}
+
+.tableRow .tableCol {
+    color: rgba(0,0,0,0.64);
+    font-size: 1em;
+    background: transparent;
+    padding: 8px 24px;
+    font-weight: 500;
+    text-align: left;
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,0.12);
+    position: relative;
+}
+      
+      .tableRow.slotValue {
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+         -khtml-user-select: none; /* Konqueror HTML */
+           -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+                user-select: none; /* Non-prefixed version, currently
+                                      supported by Chrome and Opera */
+        cursor: pointer;
+      }
+      
+      .tableRow.slotValue.active {
+        cursor: auto;
+      }
+      
+      .tableRow.slotValue .actions {
+        display: none;
+      }
+      
+      .tableRow.slotValue.active .actions {
+        display: block;
+      }
+      
+      .tableRow.slotValue:hover {
+        background-color: rgba(0,0,0,.08);
+      }
+      
+      .tableRow.slotValue.active {
+        background-color: rgba(0,0,0,.08);
+        color: rgba(0,0,0,.87);
+      }
+
+.thead .tableRow .tableCol {
+    color: rgba(0,0,0,0.64);
+    font-size: 1em;
+    background: #f5f5f5;
+    border-bottom: 1px solid rgba(0,0,0,0.12);
+    padding: 8px 24px;
+    font-weight: 500;
+    text-align: left;
+}
+
+      .table input {
+        width: 100%;
+        margin-right: 10px;
+        border-radius: 50px;
+        border: none;
+        padding: 0px 10px;
+        height: 25px;
+      }
+
+      .tableBody {
+        min-height: 200px;
+      }
+
+      
+      .icon-btn.icon-white:hover {
+    background-color: white;
+}
+.icon-btn:hover {
+    background-color: #f5f5f5;
+    color: inherit;
+}
+.icon-btn {
+    width: 1.5em;
+    height: 1.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 100%;
+    margin: 0;
+    float: right;
+    transition: all .3s linear;
+    cursor: pointer;
+    color: inherit;
+}
+.tableBody .tableRow:last-child td {
+  border-bottom: 0px;
+}
+
+.changeImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  color: transparent;
+  font-size: 2em;
+  transition: background .3s linear, color .3s linear;
+  cursor: pointer;
+}
+
+.changeImage input {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.changeImage:hover {
+  background-color: rgba(255,255,255,0.5);
+  color: white;
+}
+
+.card {
+    display: block;
+    position: relative;
+    max-width: 1400px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: rgb(255,255,255);
+    width: 100%;
+    margin: 5px 0px 15px 0px;
+    padding: 0 !important;
+    border-width: 1px;
+  box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+  transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+a.card {
+  transition: background .3s linear;
+  cursor: pointer;
+}
+
+a.card.create {
+  color: #039be5 !important;
+  text-transform: uppercase;
+  font: 500 14px/20px Roboto,sans-serif !important;
+}
+
+a.card:hover {
+  background-color: rgb(245,245,245);
+}
+
+.card.padded {
+    padding: 5px 0px;
+    width: calc(100% - 50px);
+}
+
+.tableRow td.right {
+    text-align: right;
+}
+
+.flex-center {
+    display: flex;
+    height: auto;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
+.icon-container.circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+    font-size: 1.5em;
+    height: 2.2em;
+    width: 2.2em;
+    border-radius: 100%;
+    border: solid 2.5px black;
+    color: black;
+}
+
+.icon-container.circle.green {
+    color: green;
+    border-color: green;
+}
+
+.icon-container.circle.orange {
+    color: orange;
+    border-color: orange;
+}
+
+.icon-btn options {
+    transform: scale(.5);
+    opacity: 0;
+    transition: transform .8s cubic-bezier(.25,1,.25,1),opacity .5s cubic-bezier(.25,1,.25,1);
+    display: none;
+}
+
+.icon-btn:hover options {
+    transform: scale(1);
+    opacity: 1;
+    display: block;
+}
+
+options {
+    background-color: white;
+    width: auto;
+    height: auto;
+    position: absolute;
+    right: 40px;
+    z-index: 2;
+    border-radius: 5px;
+    border: 1px solid rgba(0,0,0,0.12);
+    transition: display 0s linear .3s;
+    top: 5px;
+    margin: 0px 5px;
+}
+
+options option {
+    padding: 6px 10px;
+    width: 100%;
+    height: auto;
+    text-align: left;
+    cursor: pointer;
+}
+
+options option:hover {
+    background-color: #f5f5f5;
+}
+
+options option:not(:last-child) {
+    border-bottom: 1px solid rgba(0,0,0,0.12)
+}
+
+img.fit {
+    width: 100%;
+}
+
+      
+    </style>
+  </head>
+  <body>
+    <div id="TopBar"></div>
+    <div class="content">
+      <div class="container">
+        <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+          <div class="row">
+            <div class="col-12 d-flex justify-content-center mt-2">
+              <span class="h5"><span class="text-muted"><a href="https://console.olympusorg.com/o/{{selectedOrganisation.id}}" class="data_slot_organisationID">{{selectedOrganisation.name}}</a> / slots / </span><span class="data_slot_name">{{moduleID}}</span></span>
+            </div>
+            <div class="col-12 d-flex justify-content-center mt-2">
+              <span class="h6 text-muted"><span class="data_slot_description"></span></span>
+            </div>
+            <div class="col-12 d-flex justify-content-center mt-2">
+              <small class="p text-muted">weeks, days, time</small>
+            </div>
+          </div>
+        </div>
+        <div class="content mt-4">
+          <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="table">
+                          <div class="subtable">
+                            <div class="thead">
+                                  <div class="tableRow" style="">
+                                      <div class="tableCol d-flex justify-content-between">
+                                          Values
+                                          <div class="icon-btn icon-white" id="openCreateIntent">
+                                              <i class="fas fa-plus"></i>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <div class="tableRow" id="createIntentRow" style="display: none;">
+                                      <div class="tableCol">
+                                          <div class="d-flex flex-center justify-content-between" data-children-count="1">
+                                              <input class="quickEdit error" placeholder="Add Value" id="createValueInput">
+                                              <div class="icon-btn icon-white" id="addSlotValue">
+                                                <i class="fas fa-save"></i>
+                                              </div>
+                                              <div class="icon-btn icon-white" id="closeCreateIntent">
+                                                <i class="fas fa-times"></i>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                            <div class="tableBody" id="slot_value_list"></div>
+                            </div>
+                            <div class="subtable">
+                              <div class="thead">
+                                  <div class="tableRow" style="">
+                                      <div class="tableCol d-flex justify-content-between">
+                                          Phrases
+                                          <div class="icon-btn icon-white" id="openCreatePhrase">
+                                              <i class="fas fa-plus"></i>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <div class="tableRow" id="createPhraseRow" style="display: none;">
+                                      <div class="tableCol">
+                                          <div class="d-flex flex-center justify-content-between" data-children-count="1">
+                                              <input class="quickEdit error" placeholder="Add Phrase" id="createPhraseInput">
+                                              <div class="icon-btn icon-white" id="addSlotPhrase">
+                                                <i class="fas fa-save"></i>
+                                              </div>
+                                              <div class="icon-btn icon-white" id="closeCreatePhrase">
+                                                <i class="fas fa-times"></i>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="tableBody" id="slot_phrases_list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <script>
+      $(function() {
+        $("#TopBar").load("https://static.olympusorg.com/TopBar.htm");
+        
+        $('.list-group-item').on('click', function() {
+          $(this).find('svg')
+            .toggleClass('fa-chevron-right')
+            .toggleClass('fa-chevron-down');
+        });
+
+        $("#openCreateIntent").click(function() {
+          $("#createIntentRow").show();
+          $("#createValueInput").focus();
+          $("#openCreateIntent").hide();
+					
+        });
+        
+        $("#closeCreateIntent").click(function() {
+          $("#openCreateIntent").show();
+          $("#createIntentRow").hide();
+          $("#createIntentInput").val("");
+        });
+        
+        $("#openCreatePhrase").click(function() {
+          $("#createPhraseRow").show();
+          $("#createPhraseInput").focus();
+          $("#openCreatePhrase").hide();
+        });
+        
+        $("#closeCreatePhrase").click(function() {
+          $("#openCreatePhrase").show();
+          $("#createPhraseRow").hide();
+          $("#createPhraseInput").val("");
+        });
+      });
+    </script>
+    
+    <script src="/__/firebase/5.7.0/firebase-app.js"></script>
+
+    <!-- Add additional services that you want to use -->
+    <script src="/__/firebase/5.7.0/firebase-auth.js"></script>
+    <script src="/__/firebase/5.7.0/firebase-firestore.js"></script>
+    <script src="/__/firebase/5.7.0/firebase-messaging.js"></script>
+    <script src="/__/firebase/5.7.0/firebase-functions.js"></script>
+
+    <!-- Comment out (or don't include) services that you don't want to use -->
+    <!-- <script src="/__/firebase/5.7.0/firebase-storage.js"></script> -->
+
+    <script src="/__/firebase/init.js"></script>
+    <script>
+      
+        let slot = {};
+        let selectedValue = null;
+      $(function() {
+        const db = firebase.firestore();
+        db.settings({
+          timestampsInSnapshots: true
+        });
+        
+        const toggleValuesCreate = function(bool) {
+          if (bool) {
+            $("#createIntentRow").show();
+            $("#createIntentRow").focus();
+            $("#openCreateIntent").hide();
+          } else {
+            $("#openCreateIntent").show();
+            $("#createIntentRow").hide();
+            $("#createIntentInput").val("");
+          }
+        }
+        
+        const togglePhrasesCreate = function(bool) {
+          if (bool) {
+            $("#createPhraseRow").show();
+            $("#createPhraseRow").focus();
+            $("#openCreatePhrase").hide();
+          } else {
+            $("#openCreatePhrase").show();
+            $("#createPhraseRow").hide();
+            $("#createPhraseInput").val("");
+          }
+        }
+       
+        const slotRef = db.collection("slots").doc("{{selectedOrganisation.id}}.{{slotID}}");
+        slotRef.onSnapshot(function(doc) {
+          slot = doc.data();
+          $(".data_slot_organisationID").html(slot.organisationID);
+          $(".data_slot_name").html(slot.name);
+          $(".data_slot_description").html(slot.description);
+          $("#slot_value_list").empty();
+          for (var i in slot.values)
+            $("#slot_value_list").append(`
+              <div class="tableRow slotValue">
+                <div class="tableCol d-flex justify-content-between">
+                  `+i+`
+                  <div class="actions">
+                    <div class="icon-btn icon-white" id="openIntent">
+                      <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="icon-btn icon-white" id="deleteIntent">
+                      <i class="fas fa-trash"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>`);
+          
+          $("#slot_phrases_list").empty();
+          for (var i in slot.values[selectedValue]) {
+            $("#slot_phrases_list").append(`
+              <div class="tableRow phraseValue">
+                <div class="tableCol d-flex justify-content-between">
+                  `+slot.values[selectedValue][i]+`
+                  <div class="actions">
+                    <div class="icon-btn icon-white" id="deletePhrase">
+                      <i class="fas fa-trash"></i>
+                    </div>
+                    <div class="icon-btn icon-white" id="editPhrase">
+                      <i class="fas fa-edit"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>`);
+          }
+        });
+        
+        $(document).on("click", ".slotValue", function() {
+          $(".slotValue").removeClass("active")
+          $(this).addClass("active")
+          $(".slotValue").find(".icon-btn").css("display", "none");
+          $(this).find(".icon-btn").css("display", "flex");
+          selectedValue = $(this).text().trim();
+          
+          togglePhrasesCreate(false);
+          toggleValuesCreate(false);
+          
+          $("#slot_phrases_list").empty();
+          for (var i in slot.values[selectedValue]) {
+            $("#slot_phrases_list").append(`
+              <div class="tableRow phraseValue">
+                <div class="tableCol d-flex justify-content-between">
+                  `+slot.values[selectedValue][i]+`
+                  <div class="actions">
+                    <div class="icon-btn icon-white" id="deletePhrase">
+                      <i class="fas fa-trash"></i>
+                    </div>
+                    <div class="icon-btn icon-white" id="editPhrase">
+                      <i class="fas fa-edit"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>`);
+          }
+        });
+        
+        $("#addSlotValue").click(function() {
+          const name = $("#createValueInput").val();
+          selectedValue = name;
+          if (!slot.values || !slot.values[name])
+            slotRef.update({
+              ['values.'+ name]: [] 
+            });
+            $("#createValueInput").val("");
+						toggleValuesCreate(false);
+        });
+        
+        $(document).on("click", "#deleteIntent", function() {
+          const name = $(this).parent().parent().text().trim();
+            slotRef.update({
+              ['values.'+ name]: firebase.firestore.FieldValue.delete()
+            });
+        });
+        
+        $(document).on("click", "#deletePhrase", function() {
+          console.log($(this));
+          const name = $(this).parent().parent().text().trim();
+            slotRef.update({
+              ['values.'+ selectedValue]: firebase.firestore.FieldValue.arrayRemove(name)
+            });
+        });        
+        
+        $("#addSlotPhrase").click(function() {
+          const name = $("#createPhraseInput").val();
+          slotRef.update({
+            ['values.'+ selectedValue]: firebase.firestore.FieldValue.arrayUnion(name)
+          }).then(() => {
+            togglePhrasesCreate(false);
+          })
+        })
+      });
+    </script>
+  </body>
+</html>

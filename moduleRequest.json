@@ -1,0 +1,13 @@
+{
+  "query": {
+    "moduleID": "HASH",
+    "parameters": [
+      {
+        "slotID": "@user/slotID",
+        "value": "ABC"
+      }
+    ]
+  },
+  "authHash": "HASH",
+  "deviceHash": "HASH"
+}

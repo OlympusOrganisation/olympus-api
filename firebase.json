@@ -1,20 +1,89 @@
 {
-  "hosting": {
-    "public": "public",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-	 "rewrites": [
-      {
-        "source": "/api/**", "function": "api_v1beta1_modules"
-      },
-      {
-        "source": "/sendRequest", "function": "getIntent"
-      }
-    ]
-  },
+  "hosting": [
+    {
+      "target": "home",
+      "public": "./public/home",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ]
+    },
+    {
+      "target": "accounts",
+      "public": "./public/accounts",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "/oauth2/auth",
+          "destination": "/oauth2/auth.html"
+        },
+        {
+          "source": "/oauth/**",
+          "function": "accounts"
+        },
+        {
+          "source": "/oauth2/token",
+          "function": "getAccessToken"
+        }
+      ]
+    },
+    {
+      "target": "static",
+      "public": "./public/static",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "headers": [
+        {
+          "source": "**/*.@(html|htm|css|js|jpg|jpeg|gif|png)",
+          "headers": [ {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"
+          } ]
+        }
+      ]
+    },
+    {
+      "target": "console",
+      "public": "./public/console",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "function": "console"
+        }
+      ]
+    },
+    {
+      "target": "api",
+      "public": "./public/api",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "/v1/**", "function": "api"
+        },
+        {
+          "source": "/token",
+          "function": "getSession"
+        }
+      ]
+    }
+  ],
   "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"

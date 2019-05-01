@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Demonstrates how to send a welcome email using Firebase Functions.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Olympus</title>
+  
+  <link href="main.css" rel="stylesheet">
+  <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+  <script async defer src="https://cdn.getresonance.net/sdk/js/resonance-1.0.2.js"></script>
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <div class="body-wrapper">
+      <div class="flex center header">
+            <span class="title">Olympus</span>
+            <span class="subtitle">Choose a portal</span>
+      </div>
+      <div class="flex center-top column">
+        <div class="card-shelf">
+          <div class="card">
+            <span class="title">Clients</span>
+          </div>
+          <div class="card">
+            <span class="title">Developers</span>
+          </div>
+          <div class="card">
+            <span class="title">Corps</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
+<!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
+<script src="/__/firebase/5.4.0/firebase-app.js"></script>
+<script src="/__/firebase/5.4.0/firebase-auth.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script src="main.js"></script>
+<script src="graphics.js"></script>
+</body>
+</html>
